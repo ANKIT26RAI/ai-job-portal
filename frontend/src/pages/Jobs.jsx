@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
+import Navbar from "../components/Navbar";
+import JobCard from "../components/JobCard";
+import { toast } from "react-toastify";
 
 function Jobs() {
 
@@ -14,20 +17,47 @@ function Jobs() {
     setJobs(res.data);
   };
 
+  const applyJob = async (jobId) => {
+
+    try {
+
+      await API.post("/applications/apply", {
+        jobId: jobId
+      });
+
+     toast.success("Application submitted");
+
+    } catch (error) {
+
+      toast.error("Already applied to this job");
+    }
+
+  };
+
   return (
-    <div className="p-10">
+    <div className="bg-gray-100 min-h-screen">
 
-      <h1 className="text-3xl mb-6">Available Jobs</h1>
+      <Navbar />
 
-      {jobs.map((job) => (
-        <div key={job._id} className="border p-4 mb-4 rounded">
+      <div className="max-w-7xl mx-auto p-8">
 
-          <h2 className="text-xl font-bold">{job.title}</h2>
-          <p>{job.company}</p>
-          <p>{job.location}</p>
+        <h1 className="text-4xl font-bold mb-8">
+          Find Your Dream Job
+        </h1>
+
+        <div className="grid md:grid-cols-3 gap-6">
+
+          {jobs.map((job) => (
+            <JobCard
+              key={job._id}
+              job={job}
+              applyJob={applyJob}
+            />
+          ))}
 
         </div>
-      ))}
+
+      </div>
 
     </div>
   );
